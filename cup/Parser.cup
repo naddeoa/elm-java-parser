@@ -1,0 +1,87 @@
+package org.naddeo.elm.parser;
+
+import java_cup.runtime.*;
+
+import org.naddeo.elm.parser.type.Value;
+import org.naddeo.elm.parser.type.BooleanValue;
+import org.naddeo.elm.parser.type.StringValue;
+import org.naddeo.elm.parser.type.IntegerValue;
+import org.naddeo.elm.parser.type.StringValue;
+import org.naddeo.elm.parser.type.VariableValue;
+import org.naddeo.elm.parser.type.ValueFactory;
+
+import org.naddeo.elm.parser.ParserErrorHandler;
+
+action code {:
+
+    private final ValueFactory valueFactory = new ValueFactory();
+
+:};
+
+parser code {:
+
+    public void report_error(String message, Object info) {
+        ParserErrorHandler handler = new ParserErrorHandler();
+        handler.handle(this, this.stack, message, (Symbol)info);
+    }
+
+:};
+
+terminal                            COLON, L_PAREN, R_PAREN, EQUALS, L_BRACKET, R_BRACKET, DOLLAR;
+terminal                            TYPE, EXCLAMATION, BAR;
+terminal                            L_SQUARE_BRACKET, R_SQUARE_BRACKET;
+
+terminal                            DEBUG_VALUE;
+
+terminal String                     NAME, STRING_VALUE, OPERATION_TYPE;
+terminal Integer                    INT_VALUE;
+terminal Double                     FLOAT_VALUE;
+terminal Boolean                    BOOLEAN_VALUE;
+terminal String                     VARIABLE_VALUE;
+
+non terminal Value                  value;
+non terminal                        debug;
+
+start with debug;
+
+value           ::= DOLLAR NAME:variable
+                   {:
+                    RESULT = valueFactory.ofVariable(variable);
+                   :}
+                   |
+                   INT_VALUE:intValue
+                   {:
+                    RESULT = valueFactory.of(intValue);
+                   :}
+                   |
+                   FLOAT_VALUE:floatValue
+                   {:
+                    RESULT = valueFactory.of(floatValue);
+                   :}
+                   |
+                   BOOLEAN_VALUE:booleanValue
+                   {:
+                    RESULT = valueFactory.of(booleanValue);
+                   :}
+                   |
+                   NAME:objectValue
+                   {:
+                    RESULT = valueFactory.ofObject(objectValue);
+                   :}
+                   |
+                   STRING_VALUE:stringValue
+                   {:
+                    RESULT = valueFactory.of(stringValue);
+                   :}
+                   ;
+
+/*
+* This rule is used for debugging.
+* It allows entry straight into rules besides the start rule, given
+* a special token.
+*/
+debug           ::= DEBUG_VALUE value:value
+                   {:
+                    RESULT = value;
+                   :}
+                   ;
