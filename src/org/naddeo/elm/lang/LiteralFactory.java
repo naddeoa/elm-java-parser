@@ -5,28 +5,28 @@ import lombok.Value;
 @Value
 public class LiteralFactory
 {
-    public Literal<Boolean> of(Boolean value)
+    public BooleanLiteral of(Boolean value)
     {
-        return Literal.<Boolean>builder().value(value).build();
+        return BooleanLiteral.builder().value(value).build();
     }
 
-    public Literal<Integer> of(Integer value)
+    public IntegerLiteral of(Integer value)
     {
-        return Literal.<Integer>builder().value(value).build();
+        return IntegerLiteral.builder().value(value).build();
     }
 
-    public Literal<Double> of(Double value)
+    public FloatLiteral of(Double value)
     {
-        return Literal.<Double>builder().value(value).build();
+        return FloatLiteral.builder().value(value).build();
     }
 
-    public Literal<String> of(String value)
+    public StringLiteral of(String value)
     {
-        return Literal.<String>builder().value(value).build();
+        return StringLiteral.builder().value(value).build();
     }
 
-    public Literal<Character> of(Character value)
+    public CharacterLiteral of(Character value)
     {
-        return Literal.<Character>builder().value(value).build();
+        return CharacterLiteral.builder().value(value).build();
     }
 }

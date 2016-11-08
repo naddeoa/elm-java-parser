@@ -29,7 +29,7 @@ WhiteSpace    	= {LineTerminator} | [ \t\f]
 INT_VALUE       = -?[0-9]+
 FLOAT_VALUE     = {INT_VALUE}\.[0-9]*
 STRING_VALUE    = \"[^\"\\\\]*\"
-CHAR_VALUE      = \"[^\"\\\\]\"
+CHAR_VALUE      = \'[^\'\\\\]\'
 COMMENT         = --.*
 NAME            = [_A-Za-z][_0-9A-Za-z]*
 
@@ -43,7 +43,7 @@ NAME            = [_A-Za-z][_0-9A-Za-z]*
     // These are special debug tokens that allow us to start from different parts
     // of the grammer. This allows us to write more modular tests on subsets of the langauge.
     "**DBG_VALUE"                   { return symbol(sym.DEBUG_VALUE); }
-    "**DBG_LITERAL"                   { return symbol(sym.DEBUG_LITERAL); }
+    "**DBG_LITERAL"                 { return symbol(sym.DEBUG_LITERAL); }
 
     ":"                             { return symbol(sym.COLON); }
     "|"                             { return symbol(sym.BAR); }
@@ -58,8 +58,8 @@ NAME            = [_A-Za-z][_0-9A-Za-z]*
     "$"                             { return symbol(sym.DOLLAR); }
     "type"                          { return symbol(sym.TYPE); }
 
-    "True"                          { return symbol(sym.BOOLEAN, Boolean.parseBoolean(yytext())); }
-    "False"                         { return symbol(sym.BOOLEAN, Boolean.parseBoolean(yytext())); }
+    "True"                          { return symbol(sym.BOOLEAN, true); }
+    "False"                         { return symbol(sym.BOOLEAN, false); }
     {INT_VALUE}                     { return symbol(sym.INT_NUM, Integer.parseInt(yytext())); }
     {FLOAT_VALUE}                   { return symbol(sym.FLOAT_NUM, Double.parseDouble(yytext())); }
     {CHAR_VALUE}                    { return symbol(sym.CHR); }

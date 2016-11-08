@@ -11,6 +11,10 @@ action code {:
 
     private final LiteralFactory literalFactory = new LiteralFactory();
 
+    private String stripQuotes(String input)
+    {
+        return input.substring(1, input.length()-1);
+    }
 :};
 
 parser code {:
@@ -33,7 +37,7 @@ terminal Integer                    INT_NUM;
 terminal Double                     FLOAT_NUM;
 terminal Boolean                    BOOLEAN;
 terminal String                     STR;
-terminal Character                  CHR;
+terminal String                     CHR;
 
 non terminal Literal<?>             literal;
 non terminal                        debug;
@@ -52,12 +56,12 @@ literal         ::= INT_NUM:value
                    |
                     CHR:value
                    {:
-                    RESULT = literalFactory.of(value);
+                    RESULT = literalFactory.of(stripQuotes(value).charAt(0));
                    :}
                    |
                     STR:value
                    {:
-                    RESULT = literalFactory.of(value);
+                    RESULT = literalFactory.of(stripQuotes(value));
                    :}
                    |
                     BOOLEAN:value

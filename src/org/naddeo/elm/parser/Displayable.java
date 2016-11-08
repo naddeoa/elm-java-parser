@@ -5,7 +5,7 @@ package org.naddeo.elm.parser;
  * GraphQL object model and they can be converted into a string portion of a
  * GraphQL document.
  */
-public interface Renderable
+public interface Displayable
 {
     /**
      * Get this object as it should appear in a GraphQL document.

@@ -45,7 +45,7 @@ class ParserErrorHandler
 
     /**
      * Convert the symbol into a string that can be printed in the exception message.
-     * If the symbol contains a {@link Renderable} then the {@link Renderable#getDisplay()}
+     * If the symbol contains a {@link Displayable} then the {@link Displayable#getDisplay()}
      * is used.
      * @param symbol a symbol from a GraphQL parse
      * @return string representation of that symbol.
@@ -56,8 +56,8 @@ class ParserErrorHandler
             return "";
         }
 
-        if (symbol.value instanceof Renderable) {
-            return ((Renderable) symbol.value).getDisplay();
+        if (symbol.value instanceof Displayable) {
+            return ((Displayable) symbol.value).getDisplay();
         } else {
             return symbol.value.toString();
         }
