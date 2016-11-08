@@ -66,6 +66,7 @@ public class LiteralTest extends BaseGrammarTest
                 .expectedClass(BooleanLiteral.class)
                 .pojoValue(LITERAL_FACTORY.of(true))
                 .build()),
+
         INT_NUM(TestObject.<Literal>builder()
                 .parserInput("44")
                 .expectedClass(IntegerLiteral.class)

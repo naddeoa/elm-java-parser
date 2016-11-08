@@ -31,6 +31,7 @@ FLOAT_VALUE     = {INT_VALUE}\.[0-9]*
 STRING_VALUE    = \"[^\"\\\\]*\"
 CHAR_VALUE      = \'[^\'\\\\]\'
 COMMENT         = --.*
+TYPE            = [A-Z][_0-9A-Za-z]*
 NAME            = [_A-Za-z][_0-9A-Za-z]*
 
 %%
@@ -56,16 +57,21 @@ NAME            = [_A-Za-z][_0-9A-Za-z]*
     "["                             { return symbol(sym.L_SQUARE_BRACKET); }
     "]"                             { return symbol(sym.R_SQUARE_BRACKET); }
     "$"                             { return symbol(sym.DOLLAR); }
+    "->"                            { return symbol(sym.R_ARROW); }
+    "<|"                            { return symbol(sym.L_PIPE); }
+    "|>"                            { return symbol(sym.R_PIPE); }
     "type"                          { return symbol(sym.TYPE); }
 
     "True"                          { return symbol(sym.BOOLEAN, true); }
     "False"                         { return symbol(sym.BOOLEAN, false); }
+    {TYPE}                          { return symbol(sym.TYPE); }
     {INT_VALUE}                     { return symbol(sym.INT_NUM, Integer.parseInt(yytext())); }
     {FLOAT_VALUE}                   { return symbol(sym.FLOAT_NUM, Double.parseDouble(yytext())); }
     {CHAR_VALUE}                    { return symbol(sym.CHR); }
     {STRING_VALUE}                  { return symbol(sym.STR); }
 
 
+    {LineTerminator}                { return symbol(sym.NLINE); }
     {WhiteSpace}                    {}
     [^]                             {}
 }
