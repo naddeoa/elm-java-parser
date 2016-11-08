@@ -13,9 +13,9 @@ import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.naddeo.elm.parser.test.data.StreamSizeData;
-import org.naddeo.elm.parser.test.data.TestData;
-import org.naddeo.elm.parser.type.ValueFactory;
+import org.naddeo.elm.lang.LiteralFactory;
+import org.naddeo.elm.StreamSizeData;
+import org.naddeo.elm.TestData;
 
 import java_cup.runtime.Symbol;
 
@@ -23,19 +23,18 @@ import static java.lang.String.format;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.naddeo.elm.parser.matchers.GeneratedSymbolClassMatcher.returnsClass;
-import static org.naddeo.elm.parser.matchers.StreamSizeMatcher.containsThisMany;
+import static org.naddeo.elm.parser.GeneratedSymbolClassMatcher.returnsClass;
+import static org.naddeo.elm.parser.StreamSizeMatcher.containsThisMany;
 
 public abstract class BaseGrammarTest
 {
-
+    public static final LiteralFactory LITERAL_FACTORY = new LiteralFactory();
     private static final String _parseFailMsg = "'%s' rule did not accept the following valid input:\n%s";
     private static final String _displayFailMsg = "'%s' rule's pojo did not produce a valid, parsable graphql string:\n%s";
-    public static final ValueFactory VALUE_FACTORY = new ValueFactory();
 
     private boolean previouslyInitialized = false;
 
-    abstract ForcedStatement getTestedRule();
+    protected abstract ForcedStatement getTestedRule();
 
     private ElmParser parser = null;
     private OutputStream output = null;
@@ -102,12 +101,12 @@ public abstract class BaseGrammarTest
         return assertCan(query, this::displayFailMessage);
     }
 
-    static Collection<TestData[]> parameterize(TestData[] data)
+    protected static Collection<TestData[]> parameterize(TestData[] data)
     {
         return Arrays.stream(data).map(d -> new TestData[]{d}).collect(Collectors.toList());
     }
 
-    <T> Symbol assertCanParse(TestData<T> data)
+    protected <T> Symbol assertCanParse(TestData<T> data)
     {
         Symbol symbol = assertCanParse(data.getTest().getParserInput());
         assertThat(assertMessage(), symbol, returnsClass(data.getTest().getExpectedClass()));

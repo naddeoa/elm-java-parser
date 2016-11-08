@@ -2,19 +2,14 @@ package org.naddeo.elm.parser;
 
 import java_cup.runtime.*;
 
-import org.naddeo.elm.parser.type.Value;
-import org.naddeo.elm.parser.type.BooleanValue;
-import org.naddeo.elm.parser.type.StringValue;
-import org.naddeo.elm.parser.type.IntegerValue;
-import org.naddeo.elm.parser.type.StringValue;
-import org.naddeo.elm.parser.type.VariableValue;
-import org.naddeo.elm.parser.type.ValueFactory;
+import org.naddeo.elm.lang.Literal;
+import org.naddeo.elm.lang.LiteralFactory;
 
 import org.naddeo.elm.parser.ParserErrorHandler;
 
 action code {:
 
-    private final ValueFactory valueFactory = new ValueFactory();
+    private final LiteralFactory literalFactory = new LiteralFactory();
 
 :};
 
@@ -31,47 +26,43 @@ terminal                            COLON, L_PAREN, R_PAREN, EQUALS, L_BRACKET, 
 terminal                            TYPE, EXCLAMATION, BAR;
 terminal                            L_SQUARE_BRACKET, R_SQUARE_BRACKET;
 
-terminal                            DEBUG_VALUE;
 
-terminal String                     NAME, STRING_VALUE, OPERATION_TYPE;
-terminal Integer                    INT_VALUE;
-terminal Double                     FLOAT_VALUE;
-terminal Boolean                    BOOLEAN_VALUE;
-terminal String                     VARIABLE_VALUE;
+terminal                            DEBUG_VALUE, DEBUG_LITERAL;
 
-non terminal Value                  value;
+terminal Integer                    INT_NUM;
+terminal Double                     FLOAT_NUM;
+terminal Boolean                    BOOLEAN;
+terminal String                     STR;
+terminal Character                  CHR;
+
+non terminal Literal<?>             literal;
 non terminal                        debug;
 
 start with debug;
 
-value           ::= DOLLAR NAME:variable
+literal         ::= INT_NUM:value
                    {:
-                    RESULT = valueFactory.ofVariable(variable);
+                    RESULT = literalFactory.of(value);
                    :}
                    |
-                   INT_VALUE:intValue
+                    FLOAT_NUM:value
                    {:
-                    RESULT = valueFactory.of(intValue);
+                    RESULT = literalFactory.of(value);
                    :}
                    |
-                   FLOAT_VALUE:floatValue
+                    CHR:value
                    {:
-                    RESULT = valueFactory.of(floatValue);
+                    RESULT = literalFactory.of(value);
                    :}
                    |
-                   BOOLEAN_VALUE:booleanValue
+                    STR:value
                    {:
-                    RESULT = valueFactory.of(booleanValue);
+                    RESULT = literalFactory.of(value);
                    :}
                    |
-                   NAME:objectValue
+                    BOOLEAN:value
                    {:
-                    RESULT = valueFactory.ofObject(objectValue);
-                   :}
-                   |
-                   STRING_VALUE:stringValue
-                   {:
-                    RESULT = valueFactory.of(stringValue);
+                    RESULT = literalFactory.of(value);
                    :}
                    ;
 
@@ -80,8 +71,8 @@ value           ::= DOLLAR NAME:variable
 * It allows entry straight into rules besides the start rule, given
 * a special token.
 */
-debug           ::= DEBUG_VALUE value:value
+debug           ::= DEBUG_LITERAL literal:literal
                    {:
-                    RESULT = value;
+                    RESULT = literal;
                    :}
                    ;

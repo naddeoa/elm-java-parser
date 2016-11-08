@@ -1,15 +1,14 @@
-package org.naddeo.elm.parser.matchers;
+package org.naddeo.elm.parser;
 
-import java_cup.runtime.Symbol;
-import lombok.RequiredArgsConstructor;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
-/**
- * @author naddeo
- */
+import java_cup.runtime.Symbol;
+import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
-public class GeneratedSymbolClassMatcher extends TypeSafeMatcher<Symbol> {
+public class GeneratedSymbolClassMatcher extends TypeSafeMatcher<Symbol>
+{
 
     private final Class cls;
 
@@ -35,5 +34,4 @@ public class GeneratedSymbolClassMatcher extends TypeSafeMatcher<Symbol> {
     {
         return new GeneratedSymbolClassMatcher(cls);
     }
-
 }

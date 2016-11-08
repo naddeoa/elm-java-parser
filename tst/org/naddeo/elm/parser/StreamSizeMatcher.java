@@ -1,13 +1,15 @@
-package org.naddeo.elm.parser.matchers;
+package org.naddeo.elm.parser;
 
 import lombok.RequiredArgsConstructor;
+
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
-public class StreamSizeMatcher extends TypeSafeMatcher<Stream>{
+public class StreamSizeMatcher extends TypeSafeMatcher<Stream>
+{
 
     private final long expectedSize;
     private final Class containsClass;
