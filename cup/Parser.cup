@@ -54,7 +54,7 @@ non terminal                        debug;
 start with debug;
 
 
-signature       ::= TYPE:t1 R_ARROW TYPE:t2
+signature       ::= NAME:t1 R_ARROW NAME:t2
                    {:
                     RESULT = t1 + " -> " + t2;
                    :}

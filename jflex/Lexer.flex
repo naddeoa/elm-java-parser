@@ -33,66 +33,78 @@ CHAR_VALUE      = \'[^\'\\\\]\'
 COMMENT         = --.*
 TYPE            = [A-Z][_0-9A-Za-z]*
 NAME            = [_A-Za-z][_0-9A-Za-z]*
+DOT_NAME        = [_A-Za-z][_0-9A-Za-z.]*
 
 %state IMPORT
+%state IMPORT_AS
+%state IMPORT_AS_ALIAS
+%state IMPORT_AS_ALIAS_EXPOSING
 
 %%
 
+{COMMENT}                       {}
+
+// These are special debug tokens that allow us to start from different parts
+// of the grammer. This allows us to write more modular tests on subsets of the langauge.
+"**DBG_VALUE"                   { return symbol(sym.DEBUG_VALUE); }
+"**DBG_LITERAL"                 { return symbol(sym.DEBUG_LITERAL); }
+"**DBG_IMPORT_STMT"             { return symbol(sym.DEBUG_IMPORT_STMT); }
+"**DBG_EXPOSED"                 { yybegin(IMPORT_AS_ALIAS_EXPOSING); return symbol(sym.DEBUG_EXPOSED); }
+//"type"                          { return symbol(sym.TYPE); } // should not return TYPE, its a type definition
+
+"import"                        { yybegin(IMPORT); return symbol(sym.IMPORT); }
+"exposing"                      { return symbol(sym.EXPOSING); }
+":"                             { return symbol(sym.COLON); }
+","                             { return symbol(sym.COMMA); }
+"|"                             { return symbol(sym.BAR); }
+"!"                             { return symbol(sym.EXCLAMATION); }
+"("                             { return symbol(sym.L_PAREN); }
+"="                             { return symbol(sym.EQUALS); }
+"{"                             { return symbol(sym.L_BRACKET); }
+"}"                             { return symbol(sym.R_BRACKET); }
+"["                             { return symbol(sym.L_SQUARE_BRACKET); }
+"]"                             { return symbol(sym.R_SQUARE_BRACKET); }
+"$"                             { return symbol(sym.DOLLAR); }
+"->"                            { return symbol(sym.R_ARROW); }
+"<|"                            { return symbol(sym.L_PIPE); }
+"|>"                            { return symbol(sym.R_PIPE); }
+
+{INT_VALUE}                     { return symbol(sym.INT_NUM, Integer.parseInt(yytext())); }
+{FLOAT_VALUE}                   { return symbol(sym.FLOAT_NUM, Double.parseDouble(yytext())); }
+{CHAR_VALUE}                    { return symbol(sym.CHR); }
+{STRING_VALUE}                  { return symbol(sym.STR); }
 
 <YYINITIAL> {
-
-    {COMMENT}                       {}
-
-    // These are special debug tokens that allow us to start from different parts
-    // of the grammer. This allows us to write more modular tests on subsets of the langauge.
-    "**DBG_VALUE"                   { return symbol(sym.DEBUG_VALUE); }
-    "**DBG_LITERAL"                 { return symbol(sym.DEBUG_LITERAL); }
-    "**DBG_IMPORT_STMT"             { return symbol(sym.DEBUG_IMPORT_STMT); }
-    "**DBG_EXPOSED"                 { return symbol(sym.DEBUG_EXPOSED); }
-
-    ":"                             { return symbol(sym.COLON); }
-    ","                             { return symbol(sym.COMMA); }
-    "|"                             { return symbol(sym.BAR); }
-    "!"                             { return symbol(sym.EXCLAMATION); }
-    "("                             { return symbol(sym.L_PAREN); }
-    ")"                             { return symbol(sym.R_PAREN); }
-    "="                             { return symbol(sym.EQUALS); }
-    "{"                             { return symbol(sym.L_BRACKET); }
-    "}"                             { return symbol(sym.R_BRACKET); }
-    "["                             { return symbol(sym.L_SQUARE_BRACKET); }
-    "]"                             { return symbol(sym.R_SQUARE_BRACKET); }
-    "$"                             { return symbol(sym.DOLLAR); }
-    "->"                            { return symbol(sym.R_ARROW); }
-    "<|"                            { return symbol(sym.L_PIPE); }
-    "|>"                            { return symbol(sym.R_PIPE); }
-    "type"                          { return symbol(sym.TYPE); }
-    "import"                        { return symbol(sym.IMPORT); }
     "as"                            { return symbol(sym.AS); }
-    "exposing"                      { return symbol(sym.EXPOSING); }
 
     "True"                          { return symbol(sym.BOOLEAN, true); }
     "False"                         { return symbol(sym.BOOLEAN, false); }
-    {TYPE}                          { return symbol(sym.TYPE); }
-    {NAME}                          { return symbol(sym.NAME); }
-    {INT_VALUE}                     { return symbol(sym.INT_NUM, Integer.parseInt(yytext())); }
-    {FLOAT_VALUE}                   { return symbol(sym.FLOAT_NUM, Double.parseDouble(yytext())); }
-    {CHAR_VALUE}                    { return symbol(sym.CHR); }
-    {STRING_VALUE}                  { return symbol(sym.STR); }
-
+    //{TYPE}                          { return symbol(sym.TYPE); }
 
     {LineTerminator}                { return symbol(sym.NLINE); }
-    {WhiteSpace}                    {}
-    [^]                             {}
 }
 
 <IMPORT> {
-
-    "as"                            { return symbol(sym.AS); }
-    "exposing"                      { return symbol(sym.EXPOSING); }
-
-
-    // Whitespace does not matter in imports
-    {LineTerminator}                {}
-    {WhiteSpace}                    {}
-    [^]                             {}
+    {DOT_NAME}                      { yybegin(IMPORT_AS); return symbol(sym.NAME); }
+    {LineTerminator}                { yybegin(YYINITIAL); }
 }
+
+<IMPORT_AS> {
+    "as"                            { yybegin(IMPORT_AS_ALIAS); return symbol(sym.AS); }
+    {LineTerminator}                { yybegin(YYINITIAL); }
+}
+
+<IMPORT_AS_ALIAS> {
+    {NAME}                          { yybegin(IMPORT_AS_ALIAS_EXPOSING); return symbol(sym.NAME); }
+    {LineTerminator}                {}
+}
+
+<IMPORT_AS_ALIAS_EXPOSING> {
+    ")"                             { yybegin(YYINITIAL); return symbol(sym.R_PAREN); }
+    {LineTerminator}                {}
+}
+
+{NAME}                              { return symbol(sym.NAME); }
+")"                                 { return symbol(sym.R_PAREN); }
+{WhiteSpace}                        {}
+[^]                                 {}
