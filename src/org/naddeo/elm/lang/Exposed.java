@@ -13,7 +13,7 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper=false)
 public class Exposed
 {
-    public static final Exposed EMPTY = Exposed.builder().exports(ImmutableList.of()).build();
+    public static final Exposed NOTHING = Exposed.builder().exports(ImmutableList.of()).build();
 
     @NonNull
     @Singular

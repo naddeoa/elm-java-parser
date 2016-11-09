@@ -34,11 +34,16 @@ COMMENT         = --.*
 TYPE            = [A-Z][_0-9A-Za-z]*
 NAME            = [_A-Za-z][_0-9A-Za-z]*
 DOT_NAME        = [_A-Za-z][_0-9A-Za-z.]*
+MODULE_NAME     = [A-Z][_0-9A-Za-z.]*
 
 %state IMPORT
 %state IMPORT_AS
 %state IMPORT_AS_ALIAS
 %state IMPORT_AS_ALIAS_EXPOSING
+
+%state MODULE
+%state MODULE_EXPOSING
+%state MODULE_EXPOSING_MODULES
 
 %%
 
@@ -50,10 +55,11 @@ DOT_NAME        = [_A-Za-z][_0-9A-Za-z.]*
 "**DBG_LITERAL"                 { return symbol(sym.DEBUG_LITERAL); }
 "**DBG_IMPORT_STMT"             { return symbol(sym.DEBUG_IMPORT_STMT); }
 "**DBG_EXPOSED"                 { yybegin(IMPORT_AS_ALIAS_EXPOSING); return symbol(sym.DEBUG_EXPOSED); }
+"**DBG_MODULE"                  { return symbol(sym.DEBUG_MODULE); }
 //"type"                          { return symbol(sym.TYPE); } // should not return TYPE, its a type definition
 
 "import"                        { yybegin(IMPORT); return symbol(sym.IMPORT); }
-"exposing"                      { return symbol(sym.EXPOSING); }
+"module"                        { yybegin(MODULE); return symbol(sym.MODULE); }
 ":"                             { return symbol(sym.COLON); }
 ","                             { return symbol(sym.COMMA); }
 "|"                             { return symbol(sym.BAR); }
@@ -73,14 +79,11 @@ DOT_NAME        = [_A-Za-z][_0-9A-Za-z.]*
 {FLOAT_VALUE}                   { return symbol(sym.FLOAT_NUM, Double.parseDouble(yytext())); }
 {CHAR_VALUE}                    { return symbol(sym.CHR); }
 {STRING_VALUE}                  { return symbol(sym.STR); }
+"True"                          { return symbol(sym.BOOLEAN, true); }
+"False"                         { return symbol(sym.BOOLEAN, false); }
 
 <YYINITIAL> {
-    "as"                            { return symbol(sym.AS); }
-
-    "True"                          { return symbol(sym.BOOLEAN, true); }
-    "False"                         { return symbol(sym.BOOLEAN, false); }
     //{TYPE}                          { return symbol(sym.TYPE); }
-
     {LineTerminator}                { return symbol(sym.NLINE); }
 }
 
@@ -104,6 +107,24 @@ DOT_NAME        = [_A-Za-z][_0-9A-Za-z.]*
     {LineTerminator}                {}
 }
 
+<MODULE> {
+    {MODULE_NAME}                   { yybegin(MODULE_EXPOSING); return symbol(sym.MODULE_NAME); }
+    {LineTerminator}                { yybegin(YYINITIAL); }
+}
+
+<MODULE_EXPOSING> {
+    "exposing"                      { yybegin(MODULE_EXPOSING); return symbol(sym.EXPOSING); }
+    {LineTerminator}                { yybegin(YYINITIAL); }
+}
+
+<MODULE_EXPOSING_MODULES> {
+    ")"                             { yybegin(YYINITIAL); return symbol(sym.R_PAREN); }
+    {LineTerminator}                { }
+}
+
+
+"exposing"                          { return symbol(sym.EXPOSING); }
+"as"                                { return symbol(sym.AS); }
 {NAME}                              { return symbol(sym.NAME); }
 ")"                                 { return symbol(sym.R_PAREN); }
 {WhiteSpace}                        {}

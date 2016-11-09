@@ -33,10 +33,10 @@ class ParserErrorHandler
         } catch (Exception ignored) {
         }
 
-        throw new ParseException(String.format("Syntax error while parsing query, message was: %s\n" +
-                        "So far, I parsed:          %s\n" +
-                        "However, I didn't expect:  %s\n" +
-                        "Next would have been:      %s",
+        throw new ParseException(String.format("\n> Syntax error while parsing query, message was: %s\n" +
+                        "> So far, I parsed:          %s\n" +
+                        "> However, I didn't expect:  %s\n" +
+                        "> Next would have been:      %s\n",
                 message,
                 join(" ", displayableStack),
                 getDisplay(currentSymbol),

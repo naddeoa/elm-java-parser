@@ -7,7 +7,9 @@ import java.util.Optional;
 import org.naddeo.elm.lang.Literal;
 import org.naddeo.elm.lang.LiteralFactory;
 import org.naddeo.elm.lang.Exposed;
+import org.naddeo.elm.lang.Module;
 import org.naddeo.elm.lang.ImportStatement;
+import org.naddeo.elm.lang.ImportStatements;
 
 import org.naddeo.elm.parser.ParserErrorHandler;
 
@@ -36,18 +38,20 @@ terminal                            TYPE, EXCLAMATION, BAR;
 terminal                            L_SQUARE_BRACKET, R_SQUARE_BRACKET;
 
 
-terminal                            DEBUG_VALUE, DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED;
+terminal                            DEBUG_VALUE, DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED, DEBUG_MODULE;
 
 terminal Integer                    INT_NUM;
 terminal Double                     FLOAT_NUM;
 terminal Boolean                    BOOLEAN;
-terminal String                     STR, NAME;
+terminal String                     STR, NAME, MODULE_NAME;
 terminal String                     CHR;
 
 non terminal Literal<?>             literal;
 non terminal String                 signature;
 non terminal ImportStatement        import_stmt;
+non terminal ImportStatements       import_stmts;
 non terminal Exposed                exposed;
+non terminal Module                 module;
 non terminal                        repl, repl_repeat;
 non terminal                        debug;
 
@@ -60,6 +64,36 @@ signature       ::= NAME:t1 R_ARROW NAME:t2
                    :}
                    ;
 
+module          ::= MODULE MODULE_NAME:name
+                   {:
+                    RESULT = Module.builder()
+                        .name(name)
+                        .exposes(Exposed.NOTHING)
+                        .build();
+                   :}
+                   | MODULE MODULE_NAME:name EXPOSING L_PAREN exposed:exposed R_PAREN
+                   {:
+                    RESULT = Module.builder()
+                        .name(name)
+                        .exposes(exposed)
+                        .build();
+                   :}
+                   ;
+
+import_stmts    ::= import_stmt:importStatement
+                   {:
+                    RESULT = ImportStatements.builder()
+                        .importStatement(importStatement)
+                        .build();
+                   :}
+                   | import_stmts:importStatements import_stmt:importStatement
+                   {:
+                    RESULT = ImportStatements.builder()
+                        .importStatements(importStatements.getImportStatements())
+                        .importStatement(importStatement)
+                        .build();
+                   :}
+                   ;
 
 import_stmt     ::= IMPORT NAME:name
                    {:
@@ -171,5 +205,9 @@ debug           ::= DEBUG_LITERAL literal:literal
                    | DEBUG_EXPOSED exposed:exposed
                    {:
                     RESULT = exposed;
+                   :}
+                   | DEBUG_MODULE module:module
+                   {:
+                    RESULT = module;
                    :}
                    ;
