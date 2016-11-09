@@ -55,6 +55,6 @@ sudo commands that I'm not comfortable with.
  JVM language can directly use it as a library, which includes Haskell via
  Frege.
 
- This may go no where, but I at least want the POC up and running to provide
- import optimization for Vim before thorwing in the towel.
+This may go no where, but I at least want the POC up and running to provide
+import optimization for Vim before thorwing in the towel.
 
