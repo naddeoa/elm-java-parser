@@ -51,11 +51,10 @@ MODULE_NAME     = [A-Z][_0-9A-Za-z.]*
 
 // These are special debug tokens that allow us to start from different parts
 // of the grammer. This allows us to write more modular tests on subsets of the langauge.
-"**DBG_VALUE"                   { return symbol(sym.DEBUG_VALUE); }
 "**DBG_LITERAL"                 { return symbol(sym.DEBUG_LITERAL); }
 "**DBG_IMPORT_STMT"             { return symbol(sym.DEBUG_IMPORT_STMT); }
 "**DBG_EXPOSED"                 { yybegin(IMPORT_AS_ALIAS_EXPOSING); return symbol(sym.DEBUG_EXPOSED); }
-"**DBG_MODULE_DEFINITION"     { return symbol(sym.DEBUG_MODULE_DEFINITION); }
+"**DBG_MODULE_DEFINITION"       { return symbol(sym.DEBUG_MODULE_DEFINITION); }
 
 "import"                        { yybegin(IMPORT); return symbol(sym.IMPORT); }
 "module"                        { yybegin(MODULE); return symbol(sym.MODULE); }

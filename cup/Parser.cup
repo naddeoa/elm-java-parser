@@ -38,7 +38,7 @@ terminal                            TYPE, EXCLAMATION, BAR;
 terminal                            L_SQUARE_BRACKET, R_SQUARE_BRACKET;
 
 
-terminal                            DEBUG_VALUE, DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED, DEBUG_MODULE_DEFINITION;
+terminal                            DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED, DEBUG_MODULE_DEFINITION;
 
 terminal Integer                    INT_NUM;
 terminal Double                     FLOAT_NUM;
@@ -52,7 +52,6 @@ non terminal ImportStatement        import_stmt;
 non terminal ImportStatements       import_stmts;
 non terminal Exposed                exposed;
 non terminal ModuleDefinition       module_def;
-non terminal                        repl, repl_repeat;
 non terminal                        debug;
 
 start with debug;
@@ -165,26 +164,6 @@ literal         ::= INT_NUM:value
                    :}
                    ;
 
-repl           ::= repl_repeat:r NLINE
-                   {:
-                    System.out.println(r);
-                   :}
-                   | repl repl_repeat:r NLINE
-                   {:
-                    System.out.println(r);
-                   :}
-                   ;
-
-repl_repeat     ::= signature:signature
-                   {:
-                    RESULT = signature;
-                   :}
-                   | literal:literal
-                   {:
-                    RESULT = literal;
-                   :}
-                   ;
-
 /*
 * This rule is used for debugging.
 * It allows entry straight into rules besides the start rule, given
@@ -193,10 +172,6 @@ repl_repeat     ::= signature:signature
 debug           ::= DEBUG_LITERAL literal:literal
                    {:
                     RESULT = literal;
-                   :}
-                   | repl:repl
-                   {:
-                    RESULT = repl;
                    :}
                    | DEBUG_IMPORT_STMT import_stmt:importStatementStmt
                    {:
