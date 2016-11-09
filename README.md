@@ -44,16 +44,16 @@ be converging on using `elm-lang` for something very much like this. I think
 this approach has a few advantages though.
 
 * I think the JVM is more portable and accessible than Haskell is at the moment.
-    In order to build the `elm-format` project you need to have `stack`
-    installed. Currently, the ubuntu repositories have an incredibly out of date
-    version and the fpcomplete deb servers just return `Not authorized`. They
-    offer a shell script that you can pipe directly off the internet, full of
-    sudo commands that I'm not comfortable with.
+In order to build the `elm-format` project you need to have `stack`
+installed. Currently, the ubuntu repositories have an incredibly out of date
+version and the fpcomplete deb servers just return `Not authorized`. They
+offer a shell script that you can pipe directly off the internet, full of
+sudo commands that I'm not comfortable with.
 
- * In the end, it will just serialize as JSON (much like what is planned for
-     `elm-format`) so it can be consumed in a more flexible way. That said, any
-     JVM language can directly use it as a library, which includes Haskell via
-     Frege.
+* In the end, it will just serialize as JSON (much like what is planned for
+ `elm-format`) so it can be consumed in a more flexible way. That said, any
+ JVM language can directly use it as a library, which includes Haskell via
+ Frege.
 
  This may go no where, but I at least want the POC up and running to provide
  import optimization for Vim before thorwing in the towel.
