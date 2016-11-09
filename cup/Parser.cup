@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.naddeo.elm.lang.Literal;
 import org.naddeo.elm.lang.LiteralFactory;
 import org.naddeo.elm.lang.Exposed;
-import org.naddeo.elm.lang.Import;
+import org.naddeo.elm.lang.ImportStatement;
 
 import org.naddeo.elm.parser.ParserErrorHandler;
 
@@ -46,7 +46,7 @@ terminal String                     CHR;
 
 non terminal Literal<?>             literal;
 non terminal String                 signature;
-non terminal Import                 import_stmt;
+non terminal ImportStatement        import_stmt;
 non terminal Exposed                exposed;
 non terminal                        repl, repl_repeat;
 non terminal                        debug;
@@ -63,7 +63,7 @@ signature       ::= NAME:t1 R_ARROW NAME:t2
 
 import_stmt     ::= IMPORT NAME:name
                    {:
-                    RESULT = Import.builder()
+                    RESULT = ImportStatement.builder()
                         .name(name)
                         .alias(Optional.empty())
                         .exposed(Optional.empty())
@@ -71,7 +71,7 @@ import_stmt     ::= IMPORT NAME:name
                    :}
                    | IMPORT NAME:name AS NAME:alias
                    {:
-                    RESULT = Import.builder()
+                    RESULT = ImportStatement.builder()
                         .name(name)
                         .alias(Optional.of(alias))
                         .exposed(Optional.empty())
@@ -79,15 +79,15 @@ import_stmt     ::= IMPORT NAME:name
                    :}
                    | IMPORT NAME:name AS NAME:alias EXPOSING L_PAREN exposed:exposed R_PAREN
                    {:
-                    RESULT = Import.builder()
+                    RESULT = ImportStatement.builder()
                         .name(name)
                         .alias(Optional.of(alias))
-                        .exposed(Optional.empty())
+                        .exposed(Optional.of(exposed))
                         .build();
                    :}
                    | IMPORT NAME:name EXPOSING L_PAREN exposed:exposed R_PAREN
                    {:
-                    RESULT = Import.builder()
+                    RESULT = ImportStatement.builder()
                         .name(name)
                         .alias(Optional.empty())
                         .exposed(Optional.of(exposed))
@@ -164,9 +164,9 @@ debug           ::= DEBUG_LITERAL literal:literal
                    {:
                     RESULT = repl;
                    :}
-                   | DEBUG_IMPORT_STMT import_stmt:importStmt
+                   | DEBUG_IMPORT_STMT import_stmt:importStatementStmt
                    {:
-                    RESULT = importStmt;
+                    RESULT = importStatementStmt;
                    :}
                    | DEBUG_EXPOSED exposed:exposed
                    {:

@@ -10,7 +10,7 @@ import lombok.Value;
 @Value
 @Builder
 @EqualsAndHashCode(callSuper=false)
-public class Import
+public class ImportStatement
 {
     @NonNull
     String name;
