@@ -45,40 +45,40 @@ public class ImportStatementTest extends BaseGrammarTest
     {
 
         HAPPY_PATH(TestObject.<ImportStatement>builder()
-                .parserInput("import Module")
+                .parserInput("import ModuleDefinition")
                 .expectedClass(ImportStatement.class)
                 .pojoValue(ImportStatement.builder()
-                        .name("Module")
+                        .name("ModuleDefinition")
                         .alias(Optional.empty())
                         .exposed(Optional.empty())
                         .build())
                 .build()),
 
         DOT_NAME(TestObject.<ImportStatement>builder()
-                .parserInput("import Module.Submodule")
+                .parserInput("import ModuleDefinition.Submodule")
                 .expectedClass(ImportStatement.class)
                 .pojoValue(ImportStatement.builder()
-                        .name("Module.Submodule")
+                        .name("ModuleDefinition.Submodule")
                         .alias(Optional.empty())
                         .exposed(Optional.empty())
                         .build())
                 .build()),
 
         ALIAS(TestObject.<ImportStatement>builder()
-                .parserInput("import Module.Submodule as Submodule")
+                .parserInput("import ModuleDefinition.Submodule as Submodule")
                 .expectedClass(ImportStatement.class)
                 .pojoValue(ImportStatement.builder()
-                        .name("Module.Submodule")
+                        .name("ModuleDefinition.Submodule")
                         .alias(Optional.of("Submodule"))
                         .exposed(Optional.empty())
                         .build())
                 .build()),
 
         EXPOSING(TestObject.<ImportStatement>builder()
-                .parserInput("import Module.Submodule as Submodule exposing (Html)")
+                .parserInput("import ModuleDefinition.Submodule as Submodule exposing (Html)")
                 .expectedClass(ImportStatement.class)
                 .pojoValue(ImportStatement.builder()
-                        .name("Module.Submodule")
+                        .name("ModuleDefinition.Submodule")
                         .alias(Optional.of("Submodule"))
                         .exposed(Optional.of(Exposed.builder()
                                 .export("Html")
@@ -87,10 +87,10 @@ public class ImportStatementTest extends BaseGrammarTest
                 .build()),
 
         EXPOSING_WITHOUT_ALIAS(TestObject.<ImportStatement>builder()
-                .parserInput("import Module.Submodule exposing (Html, li, ul)")
+                .parserInput("import ModuleDefinition.Submodule exposing (Html, li, ul)")
                 .expectedClass(ImportStatement.class)
                 .pojoValue(ImportStatement.builder()
-                        .name("Module.Submodule")
+                        .name("ModuleDefinition.Submodule")
                         .alias(Optional.empty())
                         .exposed(Optional.of(Exposed.builder()
                                 .export("Html")
@@ -101,10 +101,10 @@ public class ImportStatementTest extends BaseGrammarTest
                 .build()),
 
         ALL_WITH_NEWLINES(TestObject.<ImportStatement>builder()
-                .parserInput("import Module.Submodule as Submodule \nexposing \n(Html\n,li\n,ul\n)")
+                .parserInput("import ModuleDefinition.Submodule as Submodule \nexposing \n(Html\n,li\n,ul\n)")
                 .expectedClass(ImportStatement.class)
                 .pojoValue(ImportStatement.builder()
-                        .name("Module.Submodule")
+                        .name("ModuleDefinition.Submodule")
                         .alias(Optional.of("Submodule"))
                         .exposed(Optional.of(Exposed.builder()
                                 .export("Html")

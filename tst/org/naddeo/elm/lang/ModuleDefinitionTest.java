@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @AllArgsConstructor
 @RunWith(Parameterized.class)
-public class ModuleTest extends BaseGrammarTest
+public class ModuleDefinitionTest extends BaseGrammarTest
 {
 
     @Parameterized.Parameters(name = "TestData: {0}")
@@ -36,35 +36,35 @@ public class ModuleTest extends BaseGrammarTest
     @Override
     protected ForcedStatement getTestedRule()
     {
-        return ForcedStatement.MODULE;
+        return ForcedStatement.MODULE_DEFINITION;
     }
 
     @RequiredArgsConstructor
-    public enum ModuleTestData implements TestData<Module>
+    public enum ModuleTestData implements TestData<ModuleDefinition>
     {
 
-        HAPPY_PATH(TestObject.<Module>builder()
+        HAPPY_PATH(TestObject.<ModuleDefinition>builder()
                 .parserInput("module MyModule")
-                .expectedClass(Module.class)
-                .pojoValue(Module.builder()
+                .expectedClass(ModuleDefinition.class)
+                .pojoValue(ModuleDefinition.builder()
                         .name("MyModule")
                         .exposes(Exposed.NOTHING)
                         .build())
                 .build()),
 
-        DOT_NAME(TestObject.<Module>builder()
+        DOT_NAME(TestObject.<ModuleDefinition>builder()
                 .parserInput("module MyModule.Submodule")
-                .expectedClass(Module.class)
-                .pojoValue(Module.builder()
+                .expectedClass(ModuleDefinition.class)
+                .pojoValue(ModuleDefinition.builder()
                         .name("MyModule.Submodule")
                         .exposes(Exposed.NOTHING)
                         .build())
                 .build()),
 
-        EXPOSES(TestObject.<Module>builder()
+        EXPOSES(TestObject.<ModuleDefinition>builder()
                 .parserInput("module MyModule.Submodule exposing (Html)")
-                .expectedClass(Module.class)
-                .pojoValue(Module.builder()
+                .expectedClass(ModuleDefinition.class)
+                .pojoValue(ModuleDefinition.builder()
                         .name("MyModule.Submodule")
                         .exposes(Exposed.builder()
                                 .export("Html")
@@ -72,10 +72,10 @@ public class ModuleTest extends BaseGrammarTest
                         .build())
                 .build()),
 
-        EXPOSES_MULTIPLE(TestObject.<Module>builder()
+        EXPOSES_MULTIPLE(TestObject.<ModuleDefinition>builder()
                 .parserInput("module MyModule.Submodule exposing (Html, li, ul,div)")
-                .expectedClass(Module.class)
-                .pojoValue(Module.builder()
+                .expectedClass(ModuleDefinition.class)
+                .pojoValue(ModuleDefinition.builder()
                         .name("MyModule.Submodule")
                         .exposes(Exposed.builder()
                                 .export("Html")
@@ -84,10 +84,24 @@ public class ModuleTest extends BaseGrammarTest
                                 .export("div")
                                 .build())
                         .build())
-                .build()),;
+                .build()),
+
+        NEW_LINES(TestObject.<ModuleDefinition>builder()
+                .parserInput("module MyModule.Submodule \nexposing \n(\nHtml\n,li\n,ul\n,div\n)")
+                .expectedClass(ModuleDefinition.class)
+                .pojoValue(ModuleDefinition.builder()
+                        .name("MyModule.Submodule")
+                        .exposes(Exposed.builder()
+                                .export("Html")
+                                .export("li")
+                                .export("ul")
+                                .export("div")
+                                .build())
+            .build())
+            .build()),;
 
         @Getter
-        private final TestObject<Module> test;
+        private final TestObject<ModuleDefinition> test;
 
         @Override
         public String toString()

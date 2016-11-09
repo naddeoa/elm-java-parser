@@ -6,7 +6,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class Module
+public class ModuleDefinition
 {
     @NonNull
     String name;

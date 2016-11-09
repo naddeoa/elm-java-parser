@@ -55,8 +55,7 @@ MODULE_NAME     = [A-Z][_0-9A-Za-z.]*
 "**DBG_LITERAL"                 { return symbol(sym.DEBUG_LITERAL); }
 "**DBG_IMPORT_STMT"             { return symbol(sym.DEBUG_IMPORT_STMT); }
 "**DBG_EXPOSED"                 { yybegin(IMPORT_AS_ALIAS_EXPOSING); return symbol(sym.DEBUG_EXPOSED); }
-"**DBG_MODULE"                  { return symbol(sym.DEBUG_MODULE); }
-//"type"                          { return symbol(sym.TYPE); } // should not return TYPE, its a type definition
+"**DBG_MODULE_DEFINITION"     { return symbol(sym.DEBUG_MODULE_DEFINITION); }
 
 "import"                        { yybegin(IMPORT); return symbol(sym.IMPORT); }
 "module"                        { yybegin(MODULE); return symbol(sym.MODULE); }
@@ -83,7 +82,6 @@ MODULE_NAME     = [A-Z][_0-9A-Za-z.]*
 "False"                         { return symbol(sym.BOOLEAN, false); }
 
 <YYINITIAL> {
-    //{TYPE}                          { return symbol(sym.TYPE); }
     {LineTerminator}                { return symbol(sym.NLINE); }
 }
 
@@ -99,12 +97,10 @@ MODULE_NAME     = [A-Z][_0-9A-Za-z.]*
 
 <IMPORT_AS_ALIAS> {
     {NAME}                          { yybegin(IMPORT_AS_ALIAS_EXPOSING); return symbol(sym.NAME); }
-    {LineTerminator}                {}
 }
 
 <IMPORT_AS_ALIAS_EXPOSING> {
     ")"                             { yybegin(YYINITIAL); return symbol(sym.R_PAREN); }
-    {LineTerminator}                {}
 }
 
 <MODULE> {
@@ -114,12 +110,10 @@ MODULE_NAME     = [A-Z][_0-9A-Za-z.]*
 
 <MODULE_EXPOSING> {
     "exposing"                      { yybegin(MODULE_EXPOSING); return symbol(sym.EXPOSING); }
-    {LineTerminator}                { yybegin(YYINITIAL); }
 }
 
 <MODULE_EXPOSING_MODULES> {
     ")"                             { yybegin(YYINITIAL); return symbol(sym.R_PAREN); }
-    {LineTerminator}                { }
 }
 
 
@@ -127,5 +121,6 @@ MODULE_NAME     = [A-Z][_0-9A-Za-z.]*
 "as"                                { return symbol(sym.AS); }
 {NAME}                              { return symbol(sym.NAME); }
 ")"                                 { return symbol(sym.R_PAREN); }
+{LineTerminator}                    {}
 {WhiteSpace}                        {}
 [^]                                 {}

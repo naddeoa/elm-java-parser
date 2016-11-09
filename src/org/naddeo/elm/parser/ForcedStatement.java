@@ -8,7 +8,7 @@ public enum ForcedStatement
     LITERAL("**DBG_LITERAL", "literal"),
     IMPORT_STMT("**DBG_IMPORT_STMT", "import_stmt"),
     EXPOSED("**DBG_EXPOSED", "exposed"),
-    MODULE("**DBG_MODULE", "module"),
+    MODULE_DEFINITION("**DBG_MODULE_DEFINITION", "module_def"),
 
     ;
 

@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.naddeo.elm.lang.Literal;
 import org.naddeo.elm.lang.LiteralFactory;
 import org.naddeo.elm.lang.Exposed;
-import org.naddeo.elm.lang.Module;
+import org.naddeo.elm.lang.ModuleDefinition;
 import org.naddeo.elm.lang.ImportStatement;
 import org.naddeo.elm.lang.ImportStatements;
 
@@ -38,7 +38,7 @@ terminal                            TYPE, EXCLAMATION, BAR;
 terminal                            L_SQUARE_BRACKET, R_SQUARE_BRACKET;
 
 
-terminal                            DEBUG_VALUE, DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED, DEBUG_MODULE;
+terminal                            DEBUG_VALUE, DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED, DEBUG_MODULE_DEFINITION;
 
 terminal Integer                    INT_NUM;
 terminal Double                     FLOAT_NUM;
@@ -51,7 +51,7 @@ non terminal String                 signature;
 non terminal ImportStatement        import_stmt;
 non terminal ImportStatements       import_stmts;
 non terminal Exposed                exposed;
-non terminal Module                 module;
+non terminal ModuleDefinition       module_def;
 non terminal                        repl, repl_repeat;
 non terminal                        debug;
 
@@ -64,16 +64,16 @@ signature       ::= NAME:t1 R_ARROW NAME:t2
                    :}
                    ;
 
-module          ::= MODULE MODULE_NAME:name
+module_def          ::= MODULE MODULE_NAME:name
                    {:
-                    RESULT = Module.builder()
+                    RESULT = ModuleDefinition.builder()
                         .name(name)
                         .exposes(Exposed.NOTHING)
                         .build();
                    :}
                    | MODULE MODULE_NAME:name EXPOSING L_PAREN exposed:exposed R_PAREN
                    {:
-                    RESULT = Module.builder()
+                    RESULT = ModuleDefinition.builder()
                         .name(name)
                         .exposes(exposed)
                         .build();
@@ -206,8 +206,8 @@ debug           ::= DEBUG_LITERAL literal:literal
                    {:
                     RESULT = exposed;
                    :}
-                   | DEBUG_MODULE module:module
+                   | DEBUG_MODULE_DEFINITION module_def:module_def
                    {:
-                    RESULT = module;
+                    RESULT = module_def;
                    :}
                    ;
