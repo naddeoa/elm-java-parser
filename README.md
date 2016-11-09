@@ -6,7 +6,7 @@ brand new, so don't try and use it or anything. So far, it can parse the module
 and import statements into an object model. The first iteration/POC is going to
 be using that object model to provovide auto organize imports for elm source.
 
-=== Building ===
+### Building
 
 ```
 ant
