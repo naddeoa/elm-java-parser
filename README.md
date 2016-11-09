@@ -17,19 +17,19 @@ accepts. It uses special debug tokens to jump straight into specific rules in
 the langauge. Upon succesful parse, the object model will be spit out.
 
 ```
-echo '**DBG_IMPORT_STMT import MyModule' | java -jar bin/graphql-parser.jar
+echo '**DBG_IMPORT_STMT import MyModule' | java -jar bin/elm-parser.jar
 > ImportStatement(name=MyModule, alias=Optional.empty, exposed=Optional.empty)
 
-echo '**DBG_IMPORT_STMT import MyModule.Submodule as Somethingelse' | java -jar bin/graphql-parser.jar
+echo '**DBG_IMPORT_STMT import MyModule.Submodule as Somethingelse' | java -jar bin/elm-parser.jar
 > ImportStatement(name=MyModule.Submodule, alias=Optional[Somethingelse], exposed=Optional.empty)
 
-echo '**DBG_IMPORT_STMT import ModuleDefinition.Submodule exposing (Html, li, ul)' | java -jar bin/graphql-parser.jar
+echo '**DBG_IMPORT_STMT import ModuleDefinition.Submodule exposing (Html, li, ul)' | java -jar bin/elm-parser.jar
 > ImportStatement(name=ModuleDefinition.Submodule, alias=Optional.empty, exposed=Optional[Exposed(exports=[Html, li, ul])])
 
-echo '**DBG_MODULE_DEFINITION module Html' | java -jar bin/graphql-parser.jar
+echo '**DBG_MODULE_DEFINITION module Html' | java -jar bin/elm-parser.jar
 > ModuleDefinition(name=Html, exposes=Exposed(exports=[]))
 
-echo '**DBG_MODULE_DEFINITION module Html exposing (a,b, C)' | java -jar bin/graphql-parser.jar
+echo '**DBG_MODULE_DEFINITION module Html exposing (a,b, C)' | java -jar bin/elm-parser.jar
 > ModuleDefinition(name=Html, exposes=Exposed(exports=[a, b, C]))
 ```
 
