@@ -2,8 +2,12 @@ package org.naddeo.elm.parser;
 
 import java_cup.runtime.*;
 
+import java.util.Optional;
+
 import org.naddeo.elm.lang.Literal;
 import org.naddeo.elm.lang.LiteralFactory;
+import org.naddeo.elm.lang.Exposed;
+import org.naddeo.elm.lang.Import;
 
 import org.naddeo.elm.parser.ParserErrorHandler;
 
@@ -27,21 +31,23 @@ parser code {:
 :};
 
 terminal                            COLON, L_PAREN, R_PAREN, EQUALS, L_BRACKET, R_BRACKET, DOLLAR, NLINE;
-terminal                            R_ARROW, R_PIPE, L_PIPE;
+terminal                            R_ARROW, R_PIPE, L_PIPE, COMMA, IMPORT, MODULE, AS, EXPOSING;
 terminal                            TYPE, EXCLAMATION, BAR;
 terminal                            L_SQUARE_BRACKET, R_SQUARE_BRACKET;
 
 
-terminal                            DEBUG_VALUE, DEBUG_LITERAL;
+terminal                            DEBUG_VALUE, DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED;
 
 terminal Integer                    INT_NUM;
 terminal Double                     FLOAT_NUM;
 terminal Boolean                    BOOLEAN;
-terminal String                     STR;
+terminal String                     STR, NAME;
 terminal String                     CHR;
 
 non terminal Literal<?>             literal;
 non terminal String                 signature;
+non terminal Import                 import_stmt;
+non terminal Exposed                exposed;
 non terminal                        repl, repl_repeat;
 non terminal                        debug;
 
@@ -54,6 +60,50 @@ signature       ::= TYPE:t1 R_ARROW TYPE:t2
                    :}
                    ;
 
+
+import_stmt     ::= IMPORT NAME:name
+                   {:
+                    RESULT = Import.builder()
+                        .name(name)
+                        .alias(Optional.empty())
+                        .exposed(Optional.empty())
+                        .build();
+                   :}
+                   | IMPORT NAME:name AS NAME:alias
+                   {:
+                    RESULT = Import.builder()
+                        .name(name)
+                        .alias(Optional.of(alias))
+                        .exposed(Optional.empty())
+                        .build();
+                   :}
+                   | IMPORT NAME:name AS NAME:alias EXPOSING L_PAREN exposed:exposed R_PAREN
+                   {:
+                    RESULT = Import.builder()
+                        .name(name)
+                        .alias(Optional.of(alias))
+                        .exposed(Optional.empty())
+                        .build();
+                   :}
+                   | IMPORT NAME:name EXPOSING L_PAREN exposed:exposed R_PAREN
+                   {:
+                    RESULT = Import.builder()
+                        .name(name)
+                        .alias(Optional.empty())
+                        .exposed(Optional.of(exposed))
+                        .build();
+                   :}
+                   ;
+
+exposed         ::= NAME:name
+                   {:
+                    RESULT = Exposed.builder().export(name).build();
+                   :}
+                   | exposed:exposed COMMA NAME:name
+                   {:
+                    RESULT = Exposed.builder().exports(exposed.getExports()).export(name).build();
+                   :}
+                   ;
 
 literal         ::= INT_NUM:value
                    {:
@@ -113,5 +163,13 @@ debug           ::= DEBUG_LITERAL literal:literal
                    | repl:repl
                    {:
                     RESULT = repl;
+                   :}
+                   | DEBUG_IMPORT_STMT import_stmt:importStmt
+                   {:
+                    RESULT = importStmt;
+                   :}
+                   | DEBUG_EXPOSED exposed:exposed
+                   {:
+                    RESULT = exposed;
                    :}
                    ;

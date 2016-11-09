@@ -34,19 +34,24 @@ COMMENT         = --.*
 TYPE            = [A-Z][_0-9A-Za-z]*
 NAME            = [_A-Za-z][_0-9A-Za-z]*
 
+%state IMPORT
+
 %%
+
 
 <YYINITIAL> {
 
-    {COMMENT}               {}
-    ","                     {}
+    {COMMENT}                       {}
 
     // These are special debug tokens that allow us to start from different parts
     // of the grammer. This allows us to write more modular tests on subsets of the langauge.
     "**DBG_VALUE"                   { return symbol(sym.DEBUG_VALUE); }
     "**DBG_LITERAL"                 { return symbol(sym.DEBUG_LITERAL); }
+    "**DBG_IMPORT_STMT"             { return symbol(sym.DEBUG_IMPORT_STMT); }
+    "**DBG_EXPOSED"                 { return symbol(sym.DEBUG_EXPOSED); }
 
     ":"                             { return symbol(sym.COLON); }
+    ","                             { return symbol(sym.COMMA); }
     "|"                             { return symbol(sym.BAR); }
     "!"                             { return symbol(sym.EXCLAMATION); }
     "("                             { return symbol(sym.L_PAREN); }
@@ -61,10 +66,14 @@ NAME            = [_A-Za-z][_0-9A-Za-z]*
     "<|"                            { return symbol(sym.L_PIPE); }
     "|>"                            { return symbol(sym.R_PIPE); }
     "type"                          { return symbol(sym.TYPE); }
+    "import"                        { return symbol(sym.IMPORT); }
+    "as"                            { return symbol(sym.AS); }
+    "exposing"                      { return symbol(sym.EXPOSING); }
 
     "True"                          { return symbol(sym.BOOLEAN, true); }
     "False"                         { return symbol(sym.BOOLEAN, false); }
     {TYPE}                          { return symbol(sym.TYPE); }
+    {NAME}                          { return symbol(sym.NAME); }
     {INT_VALUE}                     { return symbol(sym.INT_NUM, Integer.parseInt(yytext())); }
     {FLOAT_VALUE}                   { return symbol(sym.FLOAT_NUM, Double.parseDouble(yytext())); }
     {CHAR_VALUE}                    { return symbol(sym.CHR); }
@@ -72,6 +81,18 @@ NAME            = [_A-Za-z][_0-9A-Za-z]*
 
 
     {LineTerminator}                { return symbol(sym.NLINE); }
+    {WhiteSpace}                    {}
+    [^]                             {}
+}
+
+<IMPORT> {
+
+    "as"                            { return symbol(sym.AS); }
+    "exposing"                      { return symbol(sym.EXPOSING); }
+
+
+    // Whitespace does not matter in imports
+    {LineTerminator}                {}
     {WhiteSpace}                    {}
     [^]                             {}
 }
