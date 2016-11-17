@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.naddeo.elm.lang.Literal;
 import org.naddeo.elm.lang.LiteralFactory;
 import org.naddeo.elm.lang.Exposed;
+import org.naddeo.elm.lang.Module;
 import org.naddeo.elm.lang.ModuleDefinition;
 import org.naddeo.elm.lang.ImportStatement;
 import org.naddeo.elm.lang.ImportStatements;
@@ -39,6 +40,7 @@ terminal                            L_SQUARE_BRACKET, R_SQUARE_BRACKET;
 
 
 terminal                            DEBUG_LITERAL, DEBUG_IMPORT_STMT, DEBUG_EXPOSED, DEBUG_MODULE_DEFINITION;
+terminal                            DEBUG_MODULE, DEBUG_IMPORT_STMTS;
 
 terminal Integer                    INT_NUM;
 terminal Double                     FLOAT_NUM;
@@ -51,10 +53,12 @@ non terminal String                 signature;
 non terminal ImportStatement        import_stmt;
 non terminal ImportStatements       import_stmts;
 non terminal Exposed                exposed;
+non terminal Module                 module;
 non terminal ModuleDefinition       module_def;
 non terminal                        debug;
+non terminal                        entry;
 
-start with debug;
+start with entry;
 
 
 signature       ::= NAME:t1 R_ARROW NAME:t2
@@ -63,7 +67,33 @@ signature       ::= NAME:t1 R_ARROW NAME:t2
                    :}
                    ;
 
-module_def          ::= MODULE MODULE_NAME:name
+entry           ::= module:module
+                   {:
+                    RESULT = module;
+                   :}
+                   | debug:debug
+                   {:
+                    RESULT = debug;
+                   :}
+                   ;
+
+
+module          ::= module_def:moduleDefinition
+                   {:
+                    RESULT = Module.builder()
+                        .moduleDefinition(moduleDefinition)
+                        .build();
+                   :}
+                   | module_def:moduleDefinition import_stmts:importStatements
+                   {:
+                    RESULT = Module.builder()
+                        .moduleDefinition(moduleDefinition)
+                        .importStatements(importStatements)
+                        .build();
+                   :}
+                   ;
+
+module_def      ::= MODULE MODULE_NAME:name
                    {:
                     RESULT = ModuleDefinition.builder()
                         .name(name)
@@ -184,5 +214,13 @@ debug           ::= DEBUG_LITERAL literal:literal
                    | DEBUG_MODULE_DEFINITION module_def:module_def
                    {:
                     RESULT = module_def;
+                   :}
+                   | DEBUG_MODULE module:module
+                   {:
+                    RESULT = module;
+                   :}
+                   | DEBUG_IMPORT_STMTS import_stmts:importStatements
+                   {:
+                    RESULT = importStatements;
                    :}
                    ;

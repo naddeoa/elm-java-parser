@@ -22,7 +22,7 @@ public class ModuleDefinitionTest extends BaseGrammarTest
     @Parameterized.Parameters(name = "TestData: {0}")
     public static Collection<TestData[]> data()
     {
-        return parameterize(ModuleTestData.values());
+        return parameterize(ModuleDefinitionTestData.values());
     }
 
     private TestData currentTest;
@@ -40,7 +40,7 @@ public class ModuleDefinitionTest extends BaseGrammarTest
     }
 
     @RequiredArgsConstructor
-    public enum ModuleTestData implements TestData<ModuleDefinition>
+    public enum ModuleDefinitionTestData implements TestData<ModuleDefinition>
     {
 
         HAPPY_PATH(TestObject.<ModuleDefinition>builder()

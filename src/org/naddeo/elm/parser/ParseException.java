@@ -12,5 +12,20 @@ import lombok.Value;
 @EqualsAndHashCode(callSuper = false)
 public class ParseException extends RuntimeException
 {
-    private final String message;
+    String message;
+    Exception cause;
+
+    public ParseException(String message)
+    {
+        super(message);
+        this.message = message;
+        this.cause = null;
+    }
+
+    public ParseException(String message, Exception cause)
+    {
+        super(message, cause);
+        this.message = message;
+        this.cause = cause;
+    }
 }
