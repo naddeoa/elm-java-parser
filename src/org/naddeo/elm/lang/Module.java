@@ -10,7 +10,7 @@ import lombok.experimental.Wither;
 @Value
 @Builder
 @Wither
-public class Module
+public class Module implements ImportStatementSource
 {
 
     @NonNull
