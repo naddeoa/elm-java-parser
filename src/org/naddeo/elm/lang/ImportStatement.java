@@ -3,13 +3,13 @@ package org.naddeo.elm.lang;
 import java.util.Optional;
 
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
+import lombok.experimental.Wither;
 
 @Value
 @Builder
-@EqualsAndHashCode(callSuper=false)
+@Wither
 public class ImportStatement
 {
     @NonNull
